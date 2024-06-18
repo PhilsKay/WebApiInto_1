@@ -1,0 +1,45 @@
+using Microsoft.AspNetCore.Mvc;
+using WebApiInto_1.IServices;
+
+namespace WebApiInto_1.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class WeatherController : ControllerBase
+    {
+        private static readonly string[] Summaries = new[]
+        {
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        };
+
+        private readonly ILogger<WeatherController> _logger;
+        private readonly IUser user;
+
+        public WeatherController(ILogger<WeatherController> logger, IUser user)
+        {
+            _logger = logger;
+            this.user = user;
+        }
+
+        [HttpGet(Name = "GetWeatherForecast")]
+        public IEnumerable<WeatherForecast> Get()
+        {
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            {
+                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                TemperatureC = Random.Shared.Next(-20, 55),
+                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            })
+            .ToArray();
+        }
+
+        //capi/weather/name
+        [HttpPost]
+        [Route("name")]
+        public string GetName()
+        {
+            user.AddUser(new Model.User());
+            return string.Empty;
+        }
+    }
+}
